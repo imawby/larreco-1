@@ -501,6 +501,14 @@ namespace trkf {
 
     for (int i = 0; i < n_points; i++) {
       auto const& pos = trk->LocationAtPoint(i);
+
+      if ((std::fabs(pos.X() + 999.f) < std::numeric_limits<float>::epsilon()) ||
+          (std::fabs(pos.Y() + 999.f) < std::numeric_limits<float>::epsilon()) ||
+          (std::fabs(pos.Z() + 999.f) < std::numeric_limits<float>::epsilon()))
+      {
+          continue;
+      }
+
       recoX.push_back(pos.X());
       recoY.push_back(pos.Y());
       recoZ.push_back(pos.Z());
@@ -606,6 +614,7 @@ namespace trkf {
 
     double const p_mcs = pars[0] + deltap;
     double const p_mcs_e [[maybe_unused]] = erpars[0];
+
     return mstatus ? p_mcs : -1.0;
   }
 
