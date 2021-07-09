@@ -20,7 +20,7 @@
 #include "lardataobj/RecoBase/Hit.h"
 namespace detinfo {
   class DetectorClocks;
-  class DetectorProperties;
+  class DetectorPropertiesData;
 }
 
 namespace shower {
