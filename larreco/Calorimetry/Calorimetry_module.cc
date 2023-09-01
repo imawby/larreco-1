@@ -110,6 +110,7 @@ namespace calo {
 
     std::string fTrackModuleLabel;
     std::string fSpacePointModuleLabel;
+    std::string fSpacePointInstanceLabel;
     std::string fT0ModuleLabel;
     bool fUseArea;
     bool fSCE;
@@ -141,6 +142,7 @@ calo::Calorimetry::Calorimetry(fhicl::ParameterSet const& pset)
   : EDProducer{pset}
   , fTrackModuleLabel(pset.get<std::string>("TrackModuleLabel"))
   , fSpacePointModuleLabel(pset.get<std::string>("SpacePointModuleLabel"))
+  , fSpacePointInstanceLabel(pset.get<std::string>("SpacePointInstanceLabel"))
   , fT0ModuleLabel(pset.get<std::string>("T0ModuleLabel"))
   , fUseArea(pset.get<bool>("UseArea"))
   , fSCE(pset.get<bool>("CorrectSCE"))
@@ -157,6 +159,9 @@ calo::Calorimetry::Calorimetry(fhicl::ParameterSet const& pset)
 //------------------------------------------------------------------------------------//
 void calo::Calorimetry::produce(art::Event& evt)
 {
+
+    std::cout << "SpacePointInstanceLabel: " << fSpacePointInstanceLabel << std::endl;
+
   auto const clock_data = art::ServiceHandle<detinfo::DetectorClocksService const>()->DataFor(evt);
   auto const det_prop =
     art::ServiceHandle<detinfo::DetectorPropertiesService const>()->DataFor(evt, clock_data);
@@ -214,7 +219,9 @@ void calo::Calorimetry::produce(art::Event& evt)
 
     std::vector<std::vector<unsigned int>> hits(nplanes);
 
-    art::FindManyP<recob::SpacePoint> fmspts(allHits, evt, fSpacePointModuleLabel);
+    const art::InputTag spacePointTag(fSpacePointModuleLabel, fSpacePointInstanceLabel);
+
+    art::FindManyP<recob::SpacePoint> fmspts(allHits, evt, spacePointTag);
     for (size_t ah = 0; ah < allHits.size(); ++ah) {
       hits[allHits[ah]->WireID().Plane].push_back(ah);
     }
